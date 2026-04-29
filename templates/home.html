@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Glassly - Home{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="d-flex align-items-center justify-content-center bg-dark text-white" style="height: 500px;">
+                <div class="text-center">
+                    <h1 class="display-4 fw-bold">Welcome to Glassly</h1>
+                    <p class="lead">Discover premium eyewear for every style</p>
+                    <a href="{% url 'shop' %}" class="btn btn-warning btn-lg mt-3">Shop Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="d-flex align-items-center justify-content-center bg-secondary text-white" style="height: 500px;">
+                <div class="text-center">
+                    <h1 class="display-4 fw-bold">Sunglasses Collection</h1>
+                    <p class="lead">Style meets protection</p>
+                    <a href="{% url 'shop' %}" class="btn btn-warning btn-lg mt-3">Shop Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="d-flex align-items-center justify-content-center text-white" style="height: 500px; background-color: #1a1a2e;">
+                <div class="text-center">
+                    <h1 class="display-4 fw-bold">Fashion Glasses</h1>
+                    <p class="lead">Express yourself with every frame</p>
+                    <a href="{% url 'shop' %}" class="btn btn-warning btn-lg mt-3">Shop Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>
+
+<!-- Featured Products -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-4">Our Glasses</h2>
+        <div class="row g-4">
+            {% for product in featured_products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="card h-100 shadow-sm border-0">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="bi bi-eyeglasses text-white" style="font-size: 3rem;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body text-center">
+                        <h6 class="card-title fw-bold">{{ product.name }}</h6>
+                        <p class="text-warning fw-bold">${{ product.price }}</p>
+                        <a href="{% url 'product_detail' product.pk %}" class="btn btn-dark btn-sm">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-muted">No products available yet.</p>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'shop' %}" class="btn btn-outline-dark btn-lg">View All</a>
+        </div>
+    </div>
+</section>
+
+<!-- About Snippet -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h2 class="fw-bold">About Glassly</h2>
+                <p class="text-muted">We are passionate about eyewear. From sunglasses to prescription frames, we stock only the best quality glasses for every face and every style. Based in Lagos, Nigeria — serving customers across the country.</p>
+                <a href="#" class="btn btn-dark">Read More</a>
+            </div>
+            <div class="col-md-6 text-center">
+                <i class="bi bi-eyeglasses" style="font-size: 8rem; color: #343a40;"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
