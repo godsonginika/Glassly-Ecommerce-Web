@@ -1,7 +1,9 @@
-from django.urls import path, include
-from store import views
+from django.urls import path
+from cart import views
 
 urlpatterns = [
-    # path('', views.home, name='home'),
-    # path('', views.shop, name='shop'),
+    path('', views.cart_detail, name='cart_detail'),
+    path('add/<int:pk>/', views.add_to_cart, name='add_to_cart'),
+    path('update/<int:pk>/', views.update_cart, name='update_cart'),
+    path('remove/<int:pk>/', views.remove_from_cart, name='remove_from_cart'),
 ]

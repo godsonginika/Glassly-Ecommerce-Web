@@ -1,7 +1,6 @@
-from django.urls import path, include
-from store import views
+from django.urls import path
+from orders import views
 
 urlpatterns = [
-    # path('', views.home, name='home'),
-    # path('', views.shop, name='shop'),
+    path('', views.checkout, name='checkout'),
 ]

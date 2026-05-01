@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact - Glassly{% endblock %}
+
+{% block content %}
+
+<section class="contact-page">
+    <div class="container">
+
+        <!-- Header -->
+        <div class="contact-header">
+            <p>Get In Touch</p>
+            <h1>Contact Us</h1>
+            <span></span>
+        </div>
+
+        <div class="row g-5">
+
+            <!-- Contact Form -->
+            <div class="col-md-7">
+                <div class="contact-form-card">
+
+                    <h5>Send a Message</h5>
+
+                    <form>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Full Name">
+                        </div>
+
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Email Address">
+                        </div>
+
+                        <div class="mb-3">
+                            <textarea class="form-control" rows="4" placeholder="Your Message"></textarea>
+                        </div>
+
+                        <button type="submit" class="contact-btn">
+                            Send Message
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="col-md-5">
+                <div class="contact-info-card">
+
+                    <h5>Contact Information</h5>
+
+                    <div class="contact-item">
+                        <i class="bi bi-whatsapp"></i>
+                        <div>
+                            <p>WhatsApp</p>
+                            <span>+234 801 234 5678</span>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="bi bi-envelope"></i>
+                        <div>
+                            <p>Email</p>
+                            <span>hello@glassly.com</span>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="bi bi-geo-alt"></i>
+                        <div>
+                            <p>Location</p>
+                            <span>Lagos, Nigeria</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

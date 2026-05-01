@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Glassly - Cart{% endblock %}
+
+{% block content %}
+
+<section class="cart-page">
+    <div class="container">
+
+        <div class="cart-header">
+            <p>Shopping Bag</p>
+            <h1>Your Cart</h1>
+            <span></span>
+        </div>
+
+        {% if cart %}
+        <div class="row g-4">
+
+            <!-- Cart Items -->
+            <div class="col-lg-8">
+                <div class="cart-items-card">
+
+                    <div class="cart-table-head">
+                        <div>Product</div>
+                        <div>Price</div>
+                        <div>Qty</div>
+                        <div>Subtotal</div>
+                    </div>
+
+                    {% for item in cart %}
+                    <div class="cart-item-row">
+
+                        <div class="cart-product">
+                            {% if item.image %}
+                            <img src="{{ item.image }}" alt="{{ item.name }}">
+                            {% else %}
+                            <div class="cart-product-placeholder">
+                                <i class="bi bi-eyeglasses"></i>
+                            </div>
+                            {% endif %}
+
+                            <h3>{{ item.name }}</h3>
+                        </div>
+
+                        <div class="cart-price">
+                            ₦{{ item.price }}
+                        </div>
+
+                        <div class="cart-quantity">
+                            <a href="{% url 'remove_from_cart' item.product_id %}">−</a>
+                            <span>{{ item.quantity }}</span>
+                            <a href="{% url 'add_to_cart' item.product_id %}">+</a>
+                        </div>
+
+                        <div class="cart-subtotal">
+                            <span>₦{{ item.subtotal }}</span>
+                            <a href="{% url 'remove_from_cart' item.product_id %}" class="cart-remove">×</a>
+                        </div>
+
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="cart-summary-card">
+                    <h2>Order Summary</h2>
+
+                    <div class="summary-line">
+                        <span>Subtotal</span>
+                        <strong>₦{{ cart.get_total }}</strong>
+                    </div>
+
+                    <div class="summary-line">
+                        <span>Shipping</span>
+                        <small>Calculated at checkout</small>
+                    </div>
+
+                    <div class="summary-total">
+                        <span>Total</span>
+                        <strong>₦{{ cart.get_total }}</strong>
+                    </div>
+
+                    <a href="{% url 'checkout' %}" class="checkout-btn">
+                        Proceed to Checkout
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                    <a href="{% url 'shop' %}" class="continue-shopping">
+                        <i class="bi bi-arrow-left"></i>
+                        Continue Shopping
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        {% else %}
+        <div class="empty-cart">
+            <i class="bi bi-cart-x"></i>
+            <h2>Your cart is empty</h2>
+            <p>Looks like you haven't added any glasses yet.</p>
+            <a href="{% url 'shop' %}" class="dark-pill-btn">Start Shopping</a>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

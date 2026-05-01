@@ -37,3 +37,9 @@ def product_detail(request, pk):
         'product': product,
         'related': related,
     })
+
+def about(request):
+    return render(request, 'about.html')
+
+def contact(request):
+    return render(request, 'contact.html')
