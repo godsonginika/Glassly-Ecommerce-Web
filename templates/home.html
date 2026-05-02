@@ -7,9 +7,9 @@
 
 <!-- Hero Section -->
 <section class="home-hero">
-    <div class="hero-arrow hero-arrow-left">
+    <!-- <div class="hero-arrow hero-arrow-left">
         <i class="bi bi-arrow-left"></i>
-    </div>
+    </div> -->
 
     <div class="hero-content">
         <h2>Welcome</h2>
@@ -22,9 +22,9 @@
         <a href="{% url 'shop' %}" class="hero-btn">Shop Now</a>
     </div>
 
-    <div class="hero-arrow hero-arrow-right">
+    <!-- <div class="hero-arrow hero-arrow-right">
         <i class="bi bi-arrow-right"></i>
-    </div>
+    </div> -->
 </section>
 
 <!-- Featured Products -->
@@ -57,10 +57,6 @@
 
                         <h3>{{ product.name }}</h3>
                         <p class="product-price">₦{{ product.price }}</p>
-
-                        <a href="{% url 'product_detail' product.pk %}" class="product-add-btn">
-                            <i class="bi bi-plus"></i>
-                        </a>
                     </div>
                 </div>
             </div>
@@ -86,7 +82,7 @@
                     we stock quality glasses for every face and every style. Based in Lagos,
                     Nigeria, serving customers across the country.
                 </p>
-                <a href="#" class="dark-pill-btn">Read More</a>
+                <a href="{% url 'about' %}" class="dark-pill-btn">Read More</a>
             </div>
 
             <div class="col-md-6 text-center">

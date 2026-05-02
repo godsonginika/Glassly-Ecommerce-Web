@@ -1,14 +1,21 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %}Glassly - Checkout{% endblock %}
 
 {% block content %}
 <div class="container py-5">
 
-    <h2 class="text-center fw-bold mb-2">Checkout</h2>
-    <p class="text-center text-muted mb-5">Fill in your details and we'll send your order via WhatsApp</p>
+    <div class="section-title">
+        <h2>Checkout</h2>
+        <span></span>
+    </div>
+    <p class="text-center text-muted mb-5">
+        Fill in your details and we'll send your order via WhatsApp
+    </p>
 
-    <form method="POST" id="checkout-form">
+    <form method="POST" id="checkout-form" data-subtotal="{{ discounted_total }}">
         {% csrf_token %}
         <div class="row g-4">
 
@@ -20,22 +27,30 @@
                     </h5>
 
                     <div class="mb-3">
-                        <label class="form-label text-uppercase fw-bold" style="font-size: 0.8rem;">Full Name <span class="text-danger">*</span></label>
+                        <label class="form-label text-uppercase fw-bold" style="font-size: 0.8rem;">
+                            Full Name <span class="text-danger">*</span>
+                        </label>
                         <input type="text" name="full_name" class="form-control" placeholder="e.g. John Doe" required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label text-uppercase fw-bold" style="font-size: 0.8rem;">Phone Number <span class="text-danger">*</span></label>
+                        <label class="form-label text-uppercase fw-bold" style="font-size: 0.8rem;">
+                            Phone Number <span class="text-danger">*</span>
+                        </label>
                         <input type="text" name="phone" class="form-control" placeholder="e.g. 08012345678" required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label text-uppercase fw-bold" style="font-size: 0.8rem;">Delivery Address <span class="text-danger">*</span></label>
+                        <label class="form-label text-uppercase fw-bold" style="font-size: 0.8rem;">
+                            Delivery Address <span class="text-danger">*</span>
+                        </label>
                         <input type="text" name="address" class="form-control" placeholder="e.g. 5 Admiralty Way, Lekki" required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label text-uppercase fw-bold" style="font-size: 0.8rem;">Delivery Area <span class="text-danger">*</span></label>
+                        <label class="form-label text-uppercase fw-bold" style="font-size: 0.8rem;">
+                            Delivery Area <span class="text-danger">*</span>
+                        </label>
                         <select name="delivery_area" class="form-select" required>
                             <option value="">-- Select your area --</option>
                             <option value="Lagos Island (Lekki, VI, Ajah)">Lagos Island (Lekki, VI, Ajah)</option>
@@ -45,10 +60,12 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label text-uppercase fw-bold" style="font-size: 0.8rem;">Additional Notes <span class="text-muted">(optional)</span></label>
-                        <textarea name="notes" class="form-control" rows="3" placeholder="Any special instructions? e.g. call before delivery, prescription details..."></textarea>
+                        <label class="form-label text-uppercase fw-bold" style="font-size: 0.8rem;">
+                            Additional Notes <span class="text-muted">(optional)</span>
+                        </label>
+                        <textarea name="notes" class="form-control" rows="3"
+                            placeholder="Any special instructions? e.g. call before delivery, prescription details..."></textarea>
                     </div>
-
                 </div>
             </div>
 
@@ -60,46 +77,73 @@
                     {% for item in cart %}
                     <div class="d-flex align-items-center gap-3 mb-3">
                         {% if item.image %}
-                        <img src="{{ item.image }}" alt="{{ item.name }}" style="width: 55px; height: 55px; object-fit: cover; border-radius: 8px;">
+                        <img src="{{ item.image }}" alt="{{ item.name }}"
+                            style="width: 55px; height: 55px; object-fit: cover; border-radius: 8px;">
                         {% else %}
-                        <div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="width: 55px; height: 55px;">
+                        <div class="bg-secondary rounded d-flex align-items-center justify-content-center"
+                            style="width: 55px; height: 55px;">
                             <i class="bi bi-eyeglasses text-white"></i>
                         </div>
                         {% endif %}
+
                         <div class="flex-grow-1">
                             <p class="fw-bold mb-0">{{ item.name }}</p>
                             <small class="text-muted">Qty: {{ item.quantity }}</small>
                         </div>
+
                         <span class="text-info fw-bold">₦{{ item.price }}</span>
                     </div>
                     {% endfor %}
 
                     <hr>
+
+                    <!-- Subtotal -->
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Subtotal</span>
-                        <span class="">₦{{ cart.get_total }}</span>
+                        <span>Subtotal</span>
+                        <span>₦{{ subtotal|floatformat:0 }}</span>
                     </div>
+
+                    <!-- Discount -->
+                    {% if discount %}
+                    <div class="d-flex justify-content-between mb-2 text-success">
+                        <span>Discount</span>
+                        <span>-₦{{ discount_amount|floatformat:0 }}</span>
+                    </div>
+                    {% endif %}
+
+                    <!-- Shipping -->
                     <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted">Shipping</span>
-                        <span class="text-muted" id="shipping-cost">Select Area</span>
+                        <span>Shipping</span>
+                        <span class="text-muted fst-italic" id="shipping-cost" style="font-size: 0.8rem;">
+                            Select Area
+                        </span>
                     </div>
+
                     <hr>
+
+                    <!-- Total -->
                     <div class="d-flex justify-content-between mb-3">
-                        <span class="fw-bold fs-5">Total</span>
-                        <span class="text-info fw-bold fs-5" id="order-total">₦{{ cart.get_total }}</span>
+                        <span class="fw-bold fs-6">Total</span>
+                        <span class="text-info fw-bold fs-6" id="order-total">
+                            ₦{{ discounted_total|floatformat:0 }}
+                        </span>
                     </div>
 
                     <!-- Info box -->
-                    <div class="alert alert-info py-2 mb-3" id="shipping-info" style="font-size: 0.85rem;">
-                        <i class="bi bi-info-circle-fill"></i> Delivery fee for your area will be confirmed by the seller on WhatsApp.
+                    <div class="alert alert-info py-2 mb-3" id="shipping-info" style="font-size: 0.67rem;">
+                        <i class="bi bi-info-circle-fill"></i>
+                        Delivery fee for your area will be confirmed by the seller on WhatsApp.
                     </div>
 
+                    <!-- Submit -->
                     <button type="submit" class="btn btn-success w-100 rounded-pill fw-bold py-3">
                         <i class="bi bi-whatsapp"></i> Place Order on WhatsApp
                     </button>
+
                     <p class="text-center text-muted mt-2" style="font-size: 0.6rem;">
-                        <i class="bi bi-lock-fill"></i> Your order details are sent securely via WhatsApp
-                    </p>    
+                        <i class="bi bi-lock-fill"></i>
+                        Your order details are sent securely via WhatsApp
+                    </p>
 
                 </div>
             </div>
@@ -111,38 +155,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-    const subtotal = {{ cart.get_total }};
-    const shippingCosts = {
-        'Lagos Island (Lekki, VI, Ajah)': 1500,
-        'Lagos Mainland': 2500,
-        'Others': null,
-    };
-
-    // Hide info box on page load
-    document.getElementById('shipping-info').style.display = 'none';
-
-    document.querySelector('select[name="delivery_area"]').addEventListener('change', function() {
-        const area = this.value;
-        const shipping = shippingCosts[area];
-        const shippingEl = document.getElementById('shipping-cost');
-        const totalEl = document.getElementById('order-total');
-        const infoEl = document.getElementById('shipping-info');
-
-        if (!area) {
-            shippingEl.textContent = 'Select Area';
-            totalEl.textContent = '₦' + subtotal.toLocaleString();
-            infoEl.style.display = 'none'; // hide when no area selected
-        } else if (shipping === null) {
-            shippingEl.textContent = 'TBD on WhatsApp';
-            totalEl.textContent = '₦' + subtotal.toLocaleString() + ' + shipping';
-            infoEl.style.display = 'block'; // only show for "Others"
-        } else {
-            const total = subtotal + shipping;
-            shippingEl.textContent = '₦' + shipping.toLocaleString();
-            totalEl.textContent = '₦' + total.toLocaleString();
-            infoEl.style.display = 'none'; // hide for known areas
-        }
-    });
-</script>
+<script src="{% static 'js/checkout.js' %}"></script>
 {% endblock %}

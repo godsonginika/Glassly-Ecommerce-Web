@@ -7,6 +7,7 @@
 <section class="cart-page">
     <div class="container">
 
+        <!-- Header -->
         <div class="cart-header">
             <p>Shopping Bag</p>
             <h1>Your Cart</h1>
@@ -68,23 +69,58 @@
                 <div class="cart-summary-card">
                     <h2>Order Summary</h2>
 
+                    <hr>
+
+                    <!-- Subtotal -->
                     <div class="summary-line">
                         <span>Subtotal</span>
-                        <strong>₦{{ cart.get_total }}</strong>
+                        <strong>₦{{ subtotal|floatformat:0 }}</strong>
                     </div>
 
-                    <div class="summary-line">
-                        <span>Shipping</span>
-                        <small>Calculated at checkout</small>
+                    <!-- Discount -->
+                    {% if discount %}
+                    <div class="summary-line discount-line">
+                        <span>Discount</span>
+                        <strong>-₦{{ discount_amount|floatformat:0 }}</strong>
                     </div>
+                    {% endif %}
 
+                    <hr>
+
+                    <!-- Total -->
                     <div class="summary-total">
                         <span>Total</span>
-                        <strong>₦{{ cart.get_total }}</strong>
+                        <strong>₦{{ discounted_total|floatformat:0 }}</strong>
                     </div>
 
+                    <!-- Promo Code -->
+                    <form method="POST" action="{% url 'apply_promo' %}">
+                        {% csrf_token %}
+
+                        <div class="promo-code">
+                            <p>PROMO CODE</p>
+
+                            <div class="promo-input">
+                                <input type="text" name="promo_code" placeholder="Enter code...">
+                                <button type="submit">APPLY</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Promo Message -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if 'promo' in message.tags %}
+                            <div class="promo-message {{ message.tags }}">
+                                ✓ {{ message }}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Checkout -->
                     <a href="{% url 'checkout' %}" class="checkout-btn">
-                        Proceed to Checkout
+                        PROCEED TO CHECKOUT
                         <i class="bi bi-arrow-right"></i>
                     </a>
 
@@ -92,12 +128,14 @@
                         <i class="bi bi-arrow-left"></i>
                         Continue Shopping
                     </a>
+
                 </div>
             </div>
 
         </div>
 
         {% else %}
+        <!-- Empty Cart -->
         <div class="empty-cart">
             <i class="bi bi-cart-x"></i>
             <h2>Your cart is empty</h2>

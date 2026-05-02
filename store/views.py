@@ -3,7 +3,7 @@ from .models import Category, Product
 
 # Create your views here.
 def home(request):
-    featured_products = Product.objects.all().order_by('-date_added')[:8]
+    featured_products = Product.objects.all().order_by('-date_added')[:6]
     return render(request, 'home.html', {
         'featured_products': featured_products,
     })

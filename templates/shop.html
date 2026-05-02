@@ -2,6 +2,8 @@
 
 {% block title %}Glassly - Shop{% endblock %}
 
+{% load static %}
+
 {% block content %}
 
 <section class="shop-page">
@@ -42,14 +44,26 @@
             {% for product in products %}
             <div class="col-10 col-sm-6 col-md-4 col-lg-3">
                 <div class="glassly-product-card">
-                    {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                    {% else %}
-                    <div class="product-placeholder">
-                        <i class="bi bi-eyeglasses"></i>
-                    </div>
-                    {% endif %}
 
+                    <!-- Product Image + Hover Overlay -->
+                    <div class="product-image-box">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                        <div class="product-placeholder">
+                            <i class="bi bi-eyeglasses"></i>
+                        </div>
+                        {% endif %}
+
+                        <div class="product-hover-overlay">
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#productModal{{ product.id }}">
+                                <i class="bi bi-eye"></i>
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Product Info -->
                     <div class="product-card-body">
                         <p class="product-category">{{ product.category.name }}</p>
 
@@ -57,9 +71,91 @@
 
                         <p class="product-price">₦{{ product.price }}</p>
 
-                        <a href="{% url 'product_detail' product.pk %}" class="product-add-btn">
+                        <a href="{% url 'add_to_cart' product.pk %}" class="product-add-btn">
                             <i class="bi bi-plus"></i>
                         </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Details Modal -->
+            <div class="modal fade" id="productModal{{ product.id }}" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content product-modal-content">
+                        <div class="modal-body">
+
+                            <button type="button" class="btn-close product-modal-close" data-bs-dismiss="modal"></button>
+
+                            <div class="row g-4 align-items-center">
+
+                                <div class="col-md-6">
+                                    {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-modal-img">
+                                    {% else %}
+                                    <div class="product-placeholder modal-placeholder">
+                                        <i class="bi bi-eyeglasses"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <p class="product-category">{{ product.category.name }}</p>
+
+                                    <h3 class="product-modal-title">{{ product.name }}</h3>
+
+                                    <h4 class="product-modal-price">₦{{ product.price }}</h4>
+
+                                    <p class="product-modal-desc">{{ product.description }}</p>
+
+                                    {% if product.stock > 0 %}
+
+                                    <p class="stock-badge in-stock">
+                                        <i class="bi bi-check-circle"></i>
+                                        {{ product.stock }} in stock
+                                    </p>
+
+                                    <form method="POST" action="{% url 'add_to_cart' product.pk %}">
+                                        {% csrf_token %}
+
+                                        <div class="quantity-box">
+                                            <span>Quantity</span>
+
+                                            <div class="quantity-control">
+                                                <button type="button" class="qty-btn minus">−</button>
+
+                                                <input 
+                                                    type="number"
+                                                    name="quantity"
+                                                    value="1"
+                                                    min="1"
+                                                    max="{{ product.stock }}"
+                                                    class="qty-input"
+                                                    readonly
+                                                >
+
+                                                <button type="button" class="qty-btn plus" data-stock="{{ product.stock }}">+</button>
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="detail-cart-btn">
+                                            <i class="bi bi-cart3"></i>
+                                            Add to Cart
+                                        </button>
+                                    </form>
+
+                                    {% else %}
+
+                                    <p class="stock-badge out-stock">
+                                        <i class="bi bi-x-circle"></i>
+                                        Out of Stock
+                                    </p>
+
+                                    {% endif %}
+                                </div>
+
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -76,4 +172,8 @@
     </div>
 </section>
 
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/shop.js' %}"></script>
 {% endblock %}

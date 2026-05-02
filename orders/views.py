@@ -11,6 +11,9 @@ def checkout(request):
     if len(cart) == 0:
         return redirect('cart_detail')
 
+    # 🔹 Get discount from session (works for both GET and POST)
+    discount = request.session.get('discount', 0)
+
     if request.method == 'POST':
         full_name = request.POST.get('full_name')
         phone = request.POST.get('phone')
@@ -23,10 +26,22 @@ def checkout(request):
             'Lagos Mainland': 2500,
             'Others': 0,
         }
-        shipping = shipping_costs.get(delivery_area, 0)
-        subtotal = float(cart.get_total())
-        grand_total = subtotal + shipping
 
+        shipping = shipping_costs.get(delivery_area, 0)
+
+        subtotal = float(cart.get_total())
+
+        # 🔹 Discount calculation
+        discount_amount = subtotal * discount
+        discounted_subtotal = subtotal - discount_amount
+
+        # 🔹 Final total
+        if shipping > 0:
+            grand_total = discounted_subtotal + shipping
+        else:
+            grand_total = discounted_subtotal
+
+        # 🔹 Save order
         order = Order.objects.create(
             full_name=full_name,
             phone=phone,
@@ -44,17 +59,21 @@ def checkout(request):
                 quantity=item['quantity'],
             )
 
-        # Build WhatsApp message
+        # 🔹 Build WhatsApp message
         lines = []
         lines.append("Hello! I'd like to place an order 🛍️")
         lines.append("")
         lines.append("*ORDER DETAILS*")
+
         for item in cart:
             price = float(item['price']) * int(item['quantity'])
             lines.append(f"  • {item['name']} x{item['quantity']} — ₦{price:,.0f}")
 
         lines.append("")
         lines.append(f"*Subtotal:* ₦{subtotal:,.0f}")
+
+        if discount:
+            lines.append(f"*Discount:* -₦{discount_amount:,.0f}")
 
         if shipping == 0:
             lines.append(f"Shipping ({delivery_area}): TBD on WhatsApp")
@@ -64,7 +83,7 @@ def checkout(request):
         if shipping > 0:
             lines.append(f" *Total: ₦{grand_total:,.0f}*")
         else:
-            lines.append(f" *Total: ₦{subtotal:,.0f} + shipping*")
+            lines.append(f" *Total: ₦{discounted_subtotal:,.0f} + shipping*")
 
         lines.append("")
         lines.append("*DELIVERY INFO*")
@@ -82,11 +101,25 @@ def checkout(request):
 
         message = "\n".join(lines)
 
+        # 🔹 Clear cart + promo after order
         cart.clear()
+        request.session['discount'] = 0
+        request.session['promo_code'] = None
 
         encoded_message = urllib.parse.quote(message)
         whatsapp_url = f"https://wa.me/{settings.WHATSAPP_NUMBER}?text={encoded_message}"
 
         return redirect(whatsapp_url)
 
-    return render(request, 'checkout.html', {'cart': cart})
+    # 🔹 For GET (display on checkout page)
+    subtotal = cart.get_total()
+    discount_amount = subtotal * discount
+    discounted_total = subtotal - discount_amount
+
+    return render(request, 'checkout.html', {
+        'cart': cart,
+        'subtotal': subtotal,
+        'discount': discount,
+        'discount_amount': discount_amount,
+        'discounted_total': discounted_total,
+    })
