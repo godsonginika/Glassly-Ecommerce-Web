@@ -80,7 +80,7 @@ Glassly/
 
 ## Author
 **Your Name**
-[GitHub](https://github.com/godsonginika) | [LinkedIn](linkedin/in/godsonginika)
+[GitHub](https://github.com/godsonginika) | [LinkedIn](http://linkedin.com/in/godsonginika)
 
 ---
 
